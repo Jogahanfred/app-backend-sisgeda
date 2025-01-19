@@ -9,10 +9,12 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pe.mil.fap</groupId>
-	<artifactId>sisgeda</artifactId>
+	<artifactId>app-backend-sisgeda</artifactId>
+	
 	<version>0.0.1</version>
 	<name>app-backend-sisgeda</name>
-	<description>sisgeda</description>
+	
+	<description>app-backend-sisgeda</description>
 	<url/>
 	<licenses>
 		<license/>
