@@ -1,10 +1,13 @@
 package pe.mil.fap.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Table(name = "TBL_ESCUADRON")
@@ -24,6 +27,10 @@ public class EscuadronEntity {
 	
 	@Column(name = "FL_ESTADO")
 	private String flEstado;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_IMAGEN", referencedColumnName = "ID")
+	public ImagenEntity imagen;
 
 	public EscuadronEntity() {
 		super();
@@ -67,6 +74,14 @@ public class EscuadronEntity {
 
 	public void setFlEstado(String flEstado) {
 		this.flEstado = flEstado;
+	}
+
+	public ImagenEntity getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(ImagenEntity imagen) {
+		this.imagen = imagen;
 	}
 	
 	
