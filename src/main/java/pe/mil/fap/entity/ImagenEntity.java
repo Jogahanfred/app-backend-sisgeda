@@ -24,6 +24,12 @@ public class ImagenEntity {
 	
 	@Column(name = "ID_IMAGEN")
 	private String idImagen;
+	
+	
+
+	public ImagenEntity() {
+		super();
+	}
 
 	public ImagenEntity(String noImagen, String txImagenUrl, String idImagen) {
 		super();

@@ -34,14 +34,16 @@ public class EscuadronEntity {
 
 	public EscuadronEntity() {
 		super();
-	}
+	} 
 
-	public EscuadronEntity(Long idEscuadron, String coIdentificador, String noLargo, String flEstado) {
+	public EscuadronEntity(Long idEscuadron, String coIdentificador, String noLargo, String flEstado,
+			ImagenEntity imagen) {
 		super();
 		this.idEscuadron = idEscuadron;
 		this.coIdentificador = coIdentificador;
 		this.noLargo = noLargo;
 		this.flEstado = flEstado;
+		this.imagen = imagen;
 	}
 
 	public Long getIdEscuadron() {
@@ -83,7 +85,5 @@ public class EscuadronEntity {
 	public void setImagen(ImagenEntity imagen) {
 		this.imagen = imagen;
 	}
-	
-	
 	
 }

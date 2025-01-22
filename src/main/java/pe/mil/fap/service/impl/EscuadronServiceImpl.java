@@ -58,7 +58,7 @@ public class EscuadronServiceImpl implements EscuadronService{
 	}
 
 	@Override
-	public EscuadronEntity saveAll(EscuadronEntity escuadronEntity, MultipartFile file) throws IOException {
+	public EscuadronEntity saveWithImage(EscuadronEntity escuadronEntity, MultipartFile file) throws IOException {
 		 if (file != null && !file.isEmpty()){
 	            ImagenEntity image = imagenService.uploadImage(file);
 	            escuadronEntity.setImagen(image);
@@ -67,7 +67,7 @@ public class EscuadronServiceImpl implements EscuadronService{
 	}
 
 	@Override
-	public EscuadronEntity updateEscuadronImage(MultipartFile file, EscuadronEntity escuadron) throws IOException {
+	public EscuadronEntity updateWithImage(MultipartFile file, EscuadronEntity escuadron) throws IOException {
 		  if (escuadron.getImagen() != null) {
 	            imagenService.deleteImage(escuadron.getImagen());
 	        }

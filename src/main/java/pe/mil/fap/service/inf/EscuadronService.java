@@ -9,7 +9,7 @@ import pe.mil.fap.service.GenericService;
 
 public interface EscuadronService extends GenericService<EscuadronEntity> {
 	
-	EscuadronEntity saveAll (EscuadronEntity escuadronEntity, MultipartFile multipartFile) throws IOException;
+	EscuadronEntity saveWithImage (EscuadronEntity escuadronEntity, MultipartFile multipartFile) throws IOException;
 
-	EscuadronEntity updateEscuadronImage(MultipartFile file, EscuadronEntity escuadron) throws IOException;
+	EscuadronEntity updateWithImage(MultipartFile file, EscuadronEntity escuadron) throws IOException;
 }

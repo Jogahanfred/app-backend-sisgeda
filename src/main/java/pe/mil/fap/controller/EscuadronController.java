@@ -38,7 +38,7 @@ public class EscuadronController {
 	@PostMapping("guardarAll")
 	public ResponseEntity<?> saveAll(@RequestPart("escuadron") EscuadronEntity escuadron,
 			@RequestPart("file") MultipartFile file) throws Exception {
-		return new ResponseEntity<>(escuadronService.saveAll(escuadron, file), HttpStatus.CREATED);
+		return new ResponseEntity<>(escuadronService.saveWithImage(escuadron, file), HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{id}/image")
@@ -46,7 +46,7 @@ public class EscuadronController {
 			throws Exception {
 		Optional<EscuadronEntity> escuadron = escuadronService.findByID(id);
 		if (escuadron.isPresent()) {
-			EscuadronEntity updatedEscuadron = escuadronService.updateEscuadronImage(file, escuadron.get());
+			EscuadronEntity updatedEscuadron = escuadronService.updateWithImage(file, escuadron.get());
 			return new ResponseEntity<>(updatedEscuadron, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

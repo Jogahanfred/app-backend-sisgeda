@@ -20,7 +20,7 @@ import pe.mil.fap.service.inf.CloudinaryService;
 public class CloudinaryServiceImpl implements CloudinaryService {
 
 	private final Cloudinary cloudinary;
-	
+
 	public CloudinaryServiceImpl() {
 		Map<String, String> valuesMap = new HashMap<>();
 		valuesMap.put("cloud_name", "jogahanfredcloud");
@@ -28,28 +28,28 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 		valuesMap.put("api_secret", "iQFtMzkANSlm57Aif0nbFqq-l7Y");
 		cloudinary = new Cloudinary(valuesMap);
 	}
-	
+
 	private File convert(MultipartFile multipartFile) throws IOException {
-		File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename())); 	
+		File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
 		FileOutputStream fo = new FileOutputStream(file);
 		fo.write(multipartFile.getBytes());
 		fo.close();
 		return file;
 	}
-	
+
 	@Override
 	public Map<String, Object> upload(MultipartFile multipartFile) throws IOException {
-		 File file = convert(multipartFile);
-	        Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-	        if (!Files.deleteIfExists(file.toPath())) {
-	            throw new IOException("Failed to delete temporary file: " + file.getAbsolutePath());
-	        }
-	        return result;
+		File file = convert(multipartFile);
+		Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+		if (!Files.deleteIfExists(file.toPath())) {
+			throw new IOException("Failed to delete temporary file: " + file.getAbsolutePath());
+		}
+		return result;
 	}
 
 	@Override
 	public Map<String, Object> delete(String id) throws IOException {
-        return cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
+		return cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
 	}
 
 }
