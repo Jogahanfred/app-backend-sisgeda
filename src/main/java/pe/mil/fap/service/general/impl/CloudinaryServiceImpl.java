@@ -1,4 +1,4 @@
-package pe.mil.fap.service.impl;
+package pe.mil.fap.service.general.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
-import pe.mil.fap.service.inf.CloudinaryService;
+import pe.mil.fap.service.general.inf.CloudinaryService;
 
 @Service
 public class CloudinaryServiceImpl implements CloudinaryService {
@@ -37,6 +37,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 		return file;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> upload(MultipartFile multipartFile) throws IOException {
 		File file = convert(multipartFile);
@@ -47,6 +48,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> delete(String id) throws IOException {
 		return cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());

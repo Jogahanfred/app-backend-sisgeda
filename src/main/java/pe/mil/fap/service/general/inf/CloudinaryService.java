@@ -1,4 +1,4 @@
-package pe.mil.fap.service.inf;
+package pe.mil.fap.service.general.inf;
 
 import java.io.IOException;
 import java.util.Map;

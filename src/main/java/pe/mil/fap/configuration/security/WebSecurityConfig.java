@@ -1,4 +1,4 @@
-package pe.mil.fap.configuration;
+package pe.mil.fap.configuration.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
