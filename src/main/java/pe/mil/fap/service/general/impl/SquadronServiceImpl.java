@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import pe.mil.fap.entity.SquadronEntity;
-import pe.mil.fap.exception.NotFoundException; 
+import pe.mil.fap.exception.NotFoundException;
+import pe.mil.fap.mappers.page.PageMapper;
+import pe.mil.fap.dto.helpers.PageDTO;
 import pe.mil.fap.entity.ImageEntity;
 import pe.mil.fap.repository.SquadronRepository;
 import pe.mil.fap.service.general.inf.ImageService;
@@ -29,12 +31,18 @@ public class SquadronServiceImpl implements SquadronService {
 
 	@Autowired
 	private ImageService imageService;
-
+	
+	@Autowired
+	@SuppressWarnings("rawtypes")
+	private PageMapper pageMapper;
+	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Page<SquadronEntity> pageSquadrons(String filter, Pageable pageable) throws ServiceException {
+	public PageDTO<SquadronEntity> pageSquadrons(String filter, Pageable pageable) throws ServiceException {
 		try {
 			Page<SquadronEntity> pageSquadrons = repo.page(filter, pageable);
-			return pageSquadrons;
+			PageDTO<SquadronEntity> page =  pageMapper.toDTO(pageSquadrons);
+			return page;
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);

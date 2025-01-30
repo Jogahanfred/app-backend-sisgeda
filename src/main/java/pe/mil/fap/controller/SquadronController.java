@@ -3,8 +3,7 @@ package pe.mil.fap.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus; 
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
+import pe.mil.fap.dto.helpers.PageDTO;
 import pe.mil.fap.dto.response.ResponseDTO;
 import pe.mil.fap.entity.SquadronEntity;
 import pe.mil.fap.exception.NotFoundException;
@@ -39,7 +39,7 @@ public class SquadronController {
     public ResponseEntity<?> getAllSquadrons(
             @RequestParam String filter,
             @PageableDefault(size = 5) Pageable pageable) {
-        Page<SquadronEntity> squadrons = squadronService.pageSquadrons(filter, pageable); 
+        PageDTO<SquadronEntity> squadrons = squadronService.pageSquadrons(filter, pageable); 
 		return new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_PAGE_RETURNED, squadrons), HttpStatus.OK);
     } 
     
