@@ -114,9 +114,15 @@ public class SquadronServiceImpl implements SquadronService {
 	}
 
 	@Override
-	public Boolean update(SquadronEntity squadron) throws ServiceException {
+	public Boolean update(SquadronEntity squadronEntity) throws ServiceException {
 		try {
-			repo.save(squadron);
+			Optional<SquadronEntity> optSquadronFound = this.findByID(squadronEntity.getIdSquadron());
+			
+			if (!optSquadronFound.isPresent()) { 
+				throw new NotFoundException(MessageConstants.INFO_MESSAGE_SQUADRON_NOT_FOUND);
+			}
+			  
+			repo.save(squadronEntity); 
 			return true;
 		} catch (Exception exception) {
 			exception.printStackTrace();
