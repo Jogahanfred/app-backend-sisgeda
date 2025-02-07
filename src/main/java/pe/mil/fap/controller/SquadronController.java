@@ -80,14 +80,19 @@ public class SquadronController {
 	}
 
 	@PostMapping("/saveWithImage")
-	public ResponseEntity<ResponseDTO> saveAll(@RequestPart("squadron") SquadronEntity squadron, @RequestPart("file") MultipartFile file){
+	public ResponseEntity<ResponseDTO> saveWithImage(@RequestPart("squadron") SquadronEntity squadron, @RequestPart("file") MultipartFile file){
 		return new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_SQUADRON_CREATED, squadronService.saveWithImage(squadron, file)), HttpStatus.CREATED);
 	}
-
+/*
 	@PutMapping("/{id}/image") 
 	public ResponseEntity<?> updateSquadronImage(@PathVariable Long id, @RequestPart("file") MultipartFile file) {
 		SquadronEntity squadron = new SquadronEntity();
 		squadron.setIdSquadron(id);
+		return new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_SQUADRON_UPDATED, squadronService.updateWithImage(file, squadron)), HttpStatus.OK);
+	}*/
+	
+	@PutMapping("/updateWithImage") 
+	public ResponseEntity<?> updateWithImage(@RequestPart("squadron") SquadronEntity squadron, @RequestPart("file") MultipartFile file) {
 		return new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_SQUADRON_UPDATED, squadronService.updateWithImage(file, squadron)), HttpStatus.OK);
 	}
 	
