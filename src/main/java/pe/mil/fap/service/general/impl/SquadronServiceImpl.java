@@ -122,7 +122,7 @@ public class SquadronServiceImpl implements SquadronService {
 				throw new NotFoundException(MessageConstants.INFO_MESSAGE_SQUADRON_NOT_FOUND);
 			}
 			  
-			repo.save(squadronEntity); 
+			repo.save(squadronEntity);  
 			return true;
 		} catch (Exception exception) {
 			exception.printStackTrace();
