@@ -1,0 +1,90 @@
+package pe.mil.fap.entity;
+
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import pe.mil.fap.configuration.auditor.AuditorConfig;
+
+@Table(name = "TBL_DOCUMENT")
+@Entity(name = "DocumentEntity")
+public class DocumentEntity extends AuditorConfig<Long>{
+
+	@Id
+	@Column(name = "ID_DOCUMENT")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long idDocument;
+
+	@NotEmpty(message = "La referencia no debe ser vacio")
+	@Size(max = 40, message = "Código: máximo {max}") 
+	@Column(name = "NO_REFERENCE", nullable = false, length = 40)
+	private String noReference;
+
+	@NotNull(message = "La fecha de emisión no debe ser vacio")
+	@Column(name = "FE_EMISSION", nullable = false) 
+    private LocalDate feEmission;
+
+	@NotNull(message = "La fecha de expiración no debe ser vacio")
+	@Column(name = "FE_EXPIRATION", nullable = false) 
+    private LocalDate feExpiration;
+    
+	public DocumentEntity() {
+		super();
+	}
+
+	public DocumentEntity(Long idDocument,
+			@NotEmpty(message = "La referencia no debe ser vacio") @Size(max = 40, message = "Código: máximo {max}") String noReference,
+			@NotNull(message = "La fecha de emisión no debe ser vacio") LocalDate feEmission,
+			@NotNull(message = "La fecha de expiración no debe ser vacio") LocalDate feExpiration) {
+		super();
+		this.idDocument = idDocument;
+		this.noReference = noReference;
+		this.feEmission = feEmission;
+		this.feExpiration = feExpiration;
+	}
+	
+	public boolean isFeExpirationValid() {
+        return feExpiration != null && feExpiration.isAfter(LocalDate.now());
+    }
+
+	public Long getIdDocument() {
+		return idDocument;
+	}
+
+	public void setIdDocument(Long idDocument) {
+		this.idDocument = idDocument;
+	}
+
+	public String getNoReference() {
+		return noReference;
+	}
+
+	public void setNoReference(String noReference) {
+		this.noReference = noReference;
+	}
+
+	public LocalDate getFeEmission() {
+		return feEmission;
+	}
+
+	public void setFeEmission(LocalDate feEmission) {
+		this.feEmission = feEmission;
+	}
+
+	public LocalDate getFeExpiration() {
+		return feExpiration;
+	}
+
+	public void setFeExpiration(LocalDate feExpiration) {
+		this.feExpiration = feExpiration;
+	}
+    
+    
+}
