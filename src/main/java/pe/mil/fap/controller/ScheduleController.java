@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import pe.mil.fap.dto.helpers.PageDTO;
 import pe.mil.fap.dto.response.ResponseDTO;
+import pe.mil.fap.entity.DocumentEntity;
 import pe.mil.fap.entity.ScheduleEntity;
 import pe.mil.fap.entity.VisitEntity;
 import pe.mil.fap.entity.WorkingHoursEntity;
@@ -35,8 +36,19 @@ public class ScheduleController {
 	@Autowired
 	private ScheduleService scheduleService;
  
+	  
+	@GetMapping
+	public ResponseEntity<ResponseDTO> findAll(){
+		    List<ScheduleEntity> schedules = scheduleService.findAll();
+		    return Optional.ofNullable(schedules)
+		    		       .filter(list -> !list.isEmpty())
+		    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_DATA_RETURNED, list), HttpStatus.OK))
+		    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND, schedules), HttpStatus.OK));
+		}
+		
 	@PostMapping
 	public ResponseEntity<ResponseDTO> save(@Valid @RequestBody ScheduleEntity schedule) {
 		return new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_SCHEDULE_CREATED, scheduleService.save(schedule)), HttpStatus.CREATED);
 	} 
+	
 }

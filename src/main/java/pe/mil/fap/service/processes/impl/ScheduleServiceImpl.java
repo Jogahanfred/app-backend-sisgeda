@@ -33,8 +33,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 	@Override
 	public List<ScheduleEntity> findAll() throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return repo.findAll();
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
 	}
 
 	@Override
