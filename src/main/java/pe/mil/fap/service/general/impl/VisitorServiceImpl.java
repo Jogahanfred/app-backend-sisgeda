@@ -56,6 +56,16 @@ public class VisitorServiceImpl implements VisitorService{
 			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
 		}
 	}
+	
+	@Override
+	public Optional<VisitorEntity> findByDocumento(String documento) throws ServiceException {
+		try {
+			return repo.findByNuDocumento(documento);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
+	}
 
 	@Override
 	public List<VisitorEntity> findAllHistory() throws ServiceException {

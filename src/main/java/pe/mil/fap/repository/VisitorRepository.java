@@ -1,5 +1,7 @@
 package pe.mil.fap.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +15,7 @@ public interface VisitorRepository extends JpaRepository<VisitorEntity, Long> {
 
 	@Query("SELECT a FROM VisitorEntity a WHERE (LOWER(a.noName) LIKE LOWER(CONCAT('%', :filter, '%')) OR LOWER(a.noSurName) LIKE LOWER(CONCAT('%', :filter, '%')) OR LOWER(a.nuDocumento) LIKE LOWER(CONCAT('%', :filter, '%')))")
 	Page<VisitorEntity> page(String filter, Pageable pageable);
+
+	@Query("select v from VisitorEntity v where v.nuDocumento = :documento")
+	Optional<VisitorEntity> findByNuDocumento(String documento);
 }
