@@ -58,9 +58,9 @@ public class VisitorServiceImpl implements VisitorService{
 	}
 	
 	@Override
-	public Optional<VisitorEntity> findByDocumento(String documento) throws ServiceException {
+	public Optional<VisitorEntity> findByDocumento(String document) throws ServiceException {
 		try {
-			return repo.findByNuDocumento(documento);
+			return repo.findByNuDocumento(document);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);

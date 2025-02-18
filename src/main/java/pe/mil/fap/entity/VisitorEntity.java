@@ -41,7 +41,7 @@ public class VisitorEntity extends AuditorConfig<Long> {
 	@NotEmpty(message = "El NRO de documento no debe ser vacio")
 	@Size(min = 6, max = 20, message = "Nro Documento: mínimo {min} - máximo {max}")
 	@Column(name = "NU_DOCUMENT", nullable = false, length = 20)
-	private String nuDocumento;
+	private String nuDocument;
 
 	@NotNull(message = "El tipo de documento no debe ser vacio")
 	@Column(name = "NO_DOCUMENT_TYPE", nullable = false) 
@@ -72,7 +72,7 @@ public class VisitorEntity extends AuditorConfig<Long> {
 	public VisitorEntity(Long idVisitor,
 			@NotEmpty(message = "El nombre no debe ser vacio") @Size(min = 2, max = 50, message = "Nombre: mínimo {min} - máximo {max}") String noName,
 			@NotEmpty(message = "El apellido no debe ser vacio") @Size(min = 2, max = 50, message = "Apellido: mínimo {min} - máximo {max}") String noSurName,
-			@NotEmpty(message = "El NRO de documento no debe ser vacio") @Size(min = 6, max = 20, message = "Nro Documento: mínimo {min} - máximo {max}") String nuDocumento,
+			@NotEmpty(message = "El NRO de documento no debe ser vacio") @Size(min = 6, max = 20, message = "Nro Documento: mínimo {min} - máximo {max}") String nuDocument,
 			@NotNull(message = "El tipo de documento no debe ser vacio") DocumentTypeEnum noDocumentType,
 			@NotNull(message = "El género no debe ser vacio") GenderEnum noGender,
 			@NotNull(message = "La nacionalidad no debe ser vacio") NationalityEnum noNationality, Integer nuPhone,
@@ -81,7 +81,7 @@ public class VisitorEntity extends AuditorConfig<Long> {
 		this.idVisitor = idVisitor;
 		this.noName = noName;
 		this.noSurName = noSurName;
-		this.nuDocumento = nuDocumento;
+		this.nuDocument = nuDocument;
 		this.noDocumentType = noDocumentType;
 		this.noGender = noGender;
 		this.noNationality = noNationality;
@@ -113,12 +113,12 @@ public class VisitorEntity extends AuditorConfig<Long> {
 		this.noSurName = noSurName;
 	}
 
-	public String getNuDocumento() {
-		return nuDocumento;
+	public String getNuDocument() {
+		return nuDocument;
 	}
 
-	public void setNuDocumento(String nuDocumento) {
-		this.nuDocumento = nuDocumento;
+	public void setNuDocument(String nuDocument) {
+		this.nuDocument = nuDocument;
 	}
 
 	public DocumentTypeEnum getNoDocumentType() {

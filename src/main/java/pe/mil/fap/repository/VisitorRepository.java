@@ -13,9 +13,9 @@ import pe.mil.fap.entity.VisitorEntity;
 @Repository
 public interface VisitorRepository extends JpaRepository<VisitorEntity, Long> {
 
-	@Query("SELECT a FROM VisitorEntity a WHERE (LOWER(a.noName) LIKE LOWER(CONCAT('%', :filter, '%')) OR LOWER(a.noSurName) LIKE LOWER(CONCAT('%', :filter, '%')) OR LOWER(a.nuDocumento) LIKE LOWER(CONCAT('%', :filter, '%')))")
+	@Query("SELECT a FROM VisitorEntity a WHERE (LOWER(a.noName) LIKE LOWER(CONCAT('%', :filter, '%')) OR LOWER(a.noSurName) LIKE LOWER(CONCAT('%', :filter, '%')) OR LOWER(a.nuDocument) LIKE LOWER(CONCAT('%', :filter, '%')))")
 	Page<VisitorEntity> page(String filter, Pageable pageable);
 
-	@Query("select v from VisitorEntity v where v.nuDocumento = :documento")
-	Optional<VisitorEntity> findByNuDocumento(String documento);
+	@Query("select v from VisitorEntity v where v.nuDocument = :document")
+	Optional<VisitorEntity> findByNuDocumento(String document);
 }

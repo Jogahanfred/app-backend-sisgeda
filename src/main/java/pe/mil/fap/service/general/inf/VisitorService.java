@@ -15,7 +15,7 @@ public interface VisitorService extends GenericService<VisitorEntity> {
 	
 	PageDTO<VisitorEntity> pageVisitors(String filter, Pageable pageable) throws ServiceException;
 	
-	Optional<VisitorEntity> findByDocumento(String documento) throws ServiceException;
+	Optional<VisitorEntity> findByDocumento(String document) throws ServiceException;
 	
 	VisitorEntity saveWithImage(VisitorEntity visitorEntity, MultipartFile multipartFile) throws ServiceException;
 

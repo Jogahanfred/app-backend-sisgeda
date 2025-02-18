@@ -67,6 +67,14 @@ public class VisitorController {
 							   .orElseThrow(() -> new NotFoundException(MessageConstants.INFO_MESSAGE_VISITOR_NOT_FOUND));
 	}
 	
+	@GetMapping("/findByNroDocument/{document}")
+	public ResponseEntity<ResponseDTO> findByNroDocument(@PathVariable(name = "document") String document){
+		Optional<VisitorEntity> optVisitorFound = visitorService.findByDocumento(document);
+		return optVisitorFound.map(visitor -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_VISITOR_FOUND, visitor), HttpStatus.OK))
+							   .orElseThrow(() -> new NotFoundException(MessageConstants.INFO_MESSAGE_VISITOR_NOT_FOUND));
+	}
+	
+	
 	
 	@PostMapping
 	public ResponseEntity<ResponseDTO> save(@Valid @RequestBody VisitorEntity visitor) {
