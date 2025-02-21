@@ -33,7 +33,15 @@ public class VisitController {
 
 	@Autowired
 	private VisitService visitService;
-
+	
+	@GetMapping
+	public ResponseEntity<ResponseDTO> findAll(){
+	    List<VisitEntity> visits = visitService.findAll();
+	    return Optional.ofNullable(visits)
+	    		       .filter(list -> !list.isEmpty())
+	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_DATA_RETURNED, list), HttpStatus.OK))
+	    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND, visits), HttpStatus.OK));
+	}
 	@GetMapping("/{id}")
 	public ResponseEntity<ResponseDTO> findById(@PathVariable(name = "id") Long id){
 		Optional<VisitEntity> optVisitFound = visitService.findByID(id);

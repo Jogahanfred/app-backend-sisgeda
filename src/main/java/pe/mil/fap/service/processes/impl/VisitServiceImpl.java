@@ -49,8 +49,12 @@ public class VisitServiceImpl implements VisitService{
 	
 	@Override
 	public List<VisitEntity> findAll() throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return repo.findAll();
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
 	}
 
 	@Override
