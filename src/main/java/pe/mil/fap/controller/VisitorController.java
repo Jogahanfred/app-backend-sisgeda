@@ -77,7 +77,7 @@ public class VisitorController {
 	
 	
 	@PostMapping
-	public ResponseEntity<ResponseDTO> save(@Valid @RequestBody VisitorEntity visitor) {
+	public ResponseEntity<ResponseDTO> save( @Valid @RequestBody VisitorEntity visitor) {
 		return new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_VISITOR_CREATED, visitorService.save(visitor)), HttpStatus.CREATED);
 	}
 	

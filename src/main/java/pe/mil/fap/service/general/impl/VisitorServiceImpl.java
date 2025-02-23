@@ -90,7 +90,7 @@ public class VisitorServiceImpl implements VisitorService{
 	}
 
 	@Override
-	public VisitorEntity save(VisitorEntity visitorEntity) throws ServiceException {
+	public VisitorEntity save (VisitorEntity visitorEntity) throws ServiceException {
 		try {
 			return repo.save(visitorEntity);
 		} catch (Exception exception) {

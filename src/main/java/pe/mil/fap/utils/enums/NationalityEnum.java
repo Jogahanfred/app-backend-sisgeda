@@ -181,7 +181,7 @@ public enum NationalityEnum {
 	  TURKMENISTAN("TURKMENISTÁN"),
 	  TURKEY("TURQUÍA"),
 	  TUVALU("TUVALU"),
-	  UGANDA("UGANDA"),
+	  UGANDA("UGANDA"), 
 	  UKRAINE("UCRANIA"),
 	  UNITED_ARAB_EMIRATES("EMIRATOS ÁRABES UNIDOS"),
 	  UNITED_KINGDOM("REINO UNIDO"),
@@ -192,6 +192,7 @@ public enum NationalityEnum {
 	  VIETNAM("VIETNAM"),
 	  YEMEN("YEMEN"),
 	  ZAMBIA("ZAMBIA"),
+
 	  ZIMBABWE("ZIMBABUE");
 
 	private String description;
