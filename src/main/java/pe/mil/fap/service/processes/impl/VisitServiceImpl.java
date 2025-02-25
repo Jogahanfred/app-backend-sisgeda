@@ -26,7 +26,8 @@ import pe.mil.fap.service.general.inf.VisitorService;
 import pe.mil.fap.service.processes.inf.ScheduleService;
 import pe.mil.fap.service.processes.inf.VisitService;
 import pe.mil.fap.utils.constants.MessageConstants;
-import pe.mil.fap.utils.enums.PersonalSituationEnum; 
+import pe.mil.fap.utils.enums.PersonalSituationEnum;
+import pe.mil.fap.utils.enums.SegmentTypeEnum; 
 
 @Service
 public class VisitServiceImpl implements VisitService{
@@ -206,8 +207,17 @@ public class VisitServiceImpl implements VisitService{
 		        return isWithinDateRange && isDocumentMatched;
 			}).collect(Collectors.toList());
 			
+ 
+			
+			Boolean isNotPermitted = filteredVisit.stream().anyMatch(visit -> { 
+				boolean isNotPermittedMatched = visit.getVisitorVisit().stream().anyMatch(visitorVisit -> !visitorVisit.getCoSituation().equals(PersonalSituationEnum.PERMITTED.name()));
+		        return isNotPermittedMatched;
+			});
+			
+			
 			VisitScheduleByVisitorDTO visitSchedule = new VisitScheduleByVisitorDTO();
 			visitSchedule.setVisitor(optVisitor.get());
+			visitSchedule.setCoSituationVisitor(isNotPermitted ? SegmentTypeEnum.DETENTION : SegmentTypeEnum.ENTRANCE);
 			visitSchedule.setVisits(filteredVisit);
 			return visitSchedule;
 		} catch (Exception exception) {
