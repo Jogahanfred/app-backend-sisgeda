@@ -208,12 +208,14 @@ public class VisitServiceImpl implements VisitService{
 			}).collect(Collectors.toList());
 			
  
-			
-			Boolean isNotPermitted = filteredVisit.stream().anyMatch(visit -> { 
-				boolean isNotPermittedMatched = visit.getVisitorVisit().stream().anyMatch(visitorVisit -> !visitorVisit.getCoSituation().equals(PersonalSituationEnum.PERMITTED.name()));
-		        return isNotPermittedMatched;
-			});
-			
+			Boolean isNotPermitted = filteredVisit.stream()
+												  .anyMatch(visit -> 
+												  			visit.getVisitorVisit()
+												  				 .stream()
+												  				 .anyMatch(visitorVisit -> 
+												  					!visitorVisit.getCoSituation().equals(PersonalSituationEnum.PERMITTED)
+												  				  )
+											                );
 			
 			VisitScheduleByVisitorDTO visitSchedule = new VisitScheduleByVisitorDTO();
 			visitSchedule.setVisitor(optVisitor.get());
