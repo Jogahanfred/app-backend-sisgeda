@@ -1,5 +1,6 @@
 package pe.mil.fap.service.processes.impl;
  
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -191,7 +192,15 @@ public class VisitServiceImpl implements VisitService{
 	@Override
 	public List<VisitEntity> findVisitsScheduledOnTheDayByNuDocument(String nuDocument) throws ServiceException{
 		try {
-			return repo.findVisitsScheduledOnTheDayByNuDocument(nuDocument);
+			List<VisitEntity> lstVisit = repo.findAll();
+			LocalDate today = LocalDate.now();
+			
+			List<VisitEntity> filteredVisit = lstVisit.stream().filter(visit -> {
+		        boolean isWithinDateRange = !today.isBefore(visit.getFeStart()) && !today.isAfter(visit.getFeEnd());
+		        boolean isDocumentMatched = visit.getVisitorVisit().stream().anyMatch(visitorVisit  -> visitorVisit .getVisitor().getNuDocument().equals(nuDocument));
+		        return isWithinDateRange && isDocumentMatched;
+			}).collect(Collectors.toList());
+			return filteredVisit;
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
