@@ -47,6 +47,7 @@ public class VisitController {
 	public ResponseEntity<ResponseDTO> findVisitsScheduledOnTheDayByNuDocument(@RequestParam(value = "document") String document){
 	    List<VisitEntity> visits = visitService.findVisitsScheduledOnTheDayByNuDocument(document);
 	    return Optional.ofNullable(visits) 
+ 		               .filter(list -> !list.isEmpty())
 	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT, list), HttpStatus.OK))
 	    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT, visits), HttpStatus.OK));
 	}
