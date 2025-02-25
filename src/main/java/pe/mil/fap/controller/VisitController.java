@@ -49,7 +49,7 @@ public class VisitController {
 	    return Optional.ofNullable(visits) 
  		               .filter(list -> !list.isEmpty())
 	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT, list), HttpStatus.OK))
-	    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT, visits), HttpStatus.OK));
+	    		       .orElseThrow(()-> new NotFoundException(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT));
 	}
 	@GetMapping("/{id}")
 	public ResponseEntity<ResponseDTO> findById(@PathVariable(name = "id") Long id){
