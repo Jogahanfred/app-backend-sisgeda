@@ -1,7 +1,8 @@
 package pe.mil.fap.service.processes.inf;
 
-import java.util.List; 
+import java.util.List;
 
+import pe.mil.fap.dto.helpers.VisitScheduleByVisitorDTO;
 import pe.mil.fap.entity.VisitEntity;
 import pe.mil.fap.service.exception.ServiceException;
 import pe.mil.fap.service.generic.GenericService;
@@ -13,5 +14,5 @@ public interface VisitService extends GenericService<VisitEntity>{
 
 	List<VisitEntity> findVisitsScheduledOnTheDay() throws ServiceException;
 
-	List<VisitEntity> findVisitsScheduledOnTheDayByNuDocument(String nuDocument) throws ServiceException;
+	VisitScheduleByVisitorDTO findVisitsScheduledOnTheDayByNuDocument(String nuDocument) throws ServiceException;
 }

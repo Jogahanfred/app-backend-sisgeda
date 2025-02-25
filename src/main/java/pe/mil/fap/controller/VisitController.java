@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import pe.mil.fap.dto.helpers.PageDTO;
+import pe.mil.fap.dto.helpers.VisitScheduleByVisitorDTO;
 import pe.mil.fap.dto.response.ResponseDTO;
 import pe.mil.fap.entity.SquadronEntity;
 import pe.mil.fap.entity.VisitEntity;
@@ -45,10 +46,10 @@ public class VisitController {
 
 	@GetMapping("/findVisitsScheduledOnTheDayByNuDocument")
 	public ResponseEntity<ResponseDTO> findVisitsScheduledOnTheDayByNuDocument(@RequestParam(value = "document") String document){
-	    List<VisitEntity> visits = visitService.findVisitsScheduledOnTheDayByNuDocument(document);
-	    return Optional.ofNullable(visits) 
+	    VisitScheduleByVisitorDTO visitsByVisitor = visitService.findVisitsScheduledOnTheDayByNuDocument(document);
+	    return Optional.ofNullable(visitsByVisitor.getVisits()) 
  		               .filter(list -> !list.isEmpty())
-	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT, list), HttpStatus.OK))
+	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT, visitsByVisitor), HttpStatus.OK))
 	    		       .orElseThrow(()-> new NotFoundException(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT));
 	}
 	@GetMapping("/{id}")

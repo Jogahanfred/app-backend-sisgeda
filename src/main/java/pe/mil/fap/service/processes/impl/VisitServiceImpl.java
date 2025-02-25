@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import pe.mil.fap.dto.helpers.VisitScheduleByVisitorDTO;
 import pe.mil.fap.entity.DocumentEntity;
 import pe.mil.fap.entity.ScheduleEntity;
 import pe.mil.fap.entity.SquadronEntity;
@@ -190,8 +191,12 @@ public class VisitServiceImpl implements VisitService{
 	}
 
 	@Override
-	public List<VisitEntity> findVisitsScheduledOnTheDayByNuDocument(String nuDocument) throws ServiceException{
+	public VisitScheduleByVisitorDTO findVisitsScheduledOnTheDayByNuDocument(String nuDocument) throws ServiceException{
 		try {
+			Optional<VisitorEntity> optVisitor = this.visitorService.findByDocumento(nuDocument);
+			if (optVisitor.isEmpty()) {
+				throw new NotFoundException(MessageConstants.INFO_MESSAGE_VISITOR_NOT_FOUND);
+			}
 			List<VisitEntity> lstVisit = repo.findAll();
 			LocalDate today = LocalDate.now();
 			
@@ -200,10 +205,18 @@ public class VisitServiceImpl implements VisitService{
 		        boolean isDocumentMatched = visit.getVisitorVisit().stream().anyMatch(visitorVisit  -> visitorVisit .getVisitor().getNuDocument().equals(nuDocument));
 		        return isWithinDateRange && isDocumentMatched;
 			}).collect(Collectors.toList());
-			return filteredVisit;
+			
+			VisitScheduleByVisitorDTO visitSchedule = new VisitScheduleByVisitorDTO();
+			visitSchedule.setVisitor(optVisitor.get());
+			visitSchedule.setVisits(filteredVisit);
+			return visitSchedule;
 		} catch (Exception exception) {
 			exception.printStackTrace();
-			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+			if (exception instanceof NotFoundException) {
+				throw new NotFoundException(exception.getMessage());
+			}else {				
+				throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+			}
 		}
 	}
 	
