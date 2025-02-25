@@ -1,5 +1,7 @@
 package pe.mil.fap.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +23,12 @@ public interface VisitRepository extends JpaRepository<VisitEntity, Long>{
 	@Modifying
 	@Query("UPDATE VisitorVisitEntity a SET a.coSituation = :situation WHERE a.visitor.idVisitor = :idVisitor and a.visit.idVisit = :idVisit")
 	void updateSituationVisitor(Long idVisit, Long idVisitor, PersonalSituationEnum situation);
-	 
+
+	//LIST OF VISITS SCHEDULED FOR THE DAY
+	@Query(value = "select * from tbl_visit v where CURRENT_TIMESTAMP between v.fe_start and v.fe_end", nativeQuery = true)
+	List<VisitEntity> findVisitsScheduledOnTheDay();
+
+	//LIST OF VISITS SCHEDULED FOR THE DAY BY DOCUMENT
+	@Query(value = "select * from tbl_visit v inner join tbl_visitor_visit vv on v.id_visit = vv.id_visit inner join tbl_visitor tv on vv.id_visitor = tv.id_visitor where CURRENT_TIMESTAMP between v.fe_start and v.fe_end and tv.nu_document = :nuDocument", nativeQuery = true)
+	List<VisitEntity> findVisitsScheduledOnTheDayByNuDocument(String nuDocument);
 }

@@ -8,6 +8,11 @@ public class MessageConstants {
 	// VALIDATION
 	public static final String INFO_MESSAGE_DATA_ENTERED_INVALID = "Los datos ingresados son inválidos.";
 
+	// CONTROL VISIT
+	public static final String INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT = "Esta persona tiene acceso de ingreso a la unidad.";
+	public static final String INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT = "Esta persona Hoy no tiene programado ningun ingreso.";
+	
+	
 	// LIST
 	public static final String SUCCESS_MESSAGE_DATA_RETURNED = "El listado de datos ha sido devuelto correctamente.";
 	public static final String SUCCESS_MESSAGE_PAGE_RETURNED = "El paginado ha sido devuelto correctamente.";

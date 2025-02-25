@@ -1,6 +1,5 @@
 package pe.mil.fap.service.processes.impl;
-
-import java.util.Iterator;
+ 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -15,8 +14,7 @@ import pe.mil.fap.entity.DocumentEntity;
 import pe.mil.fap.entity.ScheduleEntity;
 import pe.mil.fap.entity.SquadronEntity;
 import pe.mil.fap.entity.VisitEntity;
-import pe.mil.fap.entity.VisitorEntity;
-import pe.mil.fap.entity.VisitorVisitEntity;
+import pe.mil.fap.entity.VisitorEntity; 
 import pe.mil.fap.exception.BadRequestException;
 import pe.mil.fap.exception.NotFoundException;
 import pe.mil.fap.repository.VisitRepository;
@@ -26,8 +24,7 @@ import pe.mil.fap.service.general.inf.VisitorService;
 import pe.mil.fap.service.processes.inf.ScheduleService;
 import pe.mil.fap.service.processes.inf.VisitService;
 import pe.mil.fap.utils.constants.MessageConstants;
-import pe.mil.fap.utils.enums.PersonalSituationEnum;
-import pe.mil.fap.utils.enums.StateEnum;
+import pe.mil.fap.utils.enums.PersonalSituationEnum; 
 
 @Service
 public class VisitServiceImpl implements VisitService{
@@ -178,6 +175,26 @@ public class VisitServiceImpl implements VisitService{
 			}else {				
 				throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
 			}
+		}
+	}
+
+	@Override
+	public List<VisitEntity> findVisitsScheduledOnTheDay() throws ServiceException{
+		try {
+			return repo.findVisitsScheduledOnTheDay();
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
+	}
+
+	@Override
+	public List<VisitEntity> findVisitsScheduledOnTheDayByNuDocument(String nuDocument) throws ServiceException{
+		try {
+			return repo.findVisitsScheduledOnTheDayByNuDocument(nuDocument);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
 		}
 	}
 	
