@@ -9,8 +9,8 @@ public class MessageConstants {
 	public static final String INFO_MESSAGE_DATA_ENTERED_INVALID = "Los datos ingresados son inválidos.";
 
 	// CONTROL VISIT
-	public static final String INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT = "Esta persona tiene acceso de ingreso a la unidad.";
-	public static final String INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT = "Esta persona Hoy no tiene programado ningun ingreso.";
+	public static final String INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT = "Esta persona tiene programado visita a la unidad.";
+	public static final String INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT = "Esta persona hoy no tiene programado ningun ingreso.";
 	
 	
 	// LIST

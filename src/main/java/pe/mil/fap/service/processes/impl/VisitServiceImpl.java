@@ -16,7 +16,8 @@ import pe.mil.fap.entity.DocumentEntity;
 import pe.mil.fap.entity.ScheduleEntity;
 import pe.mil.fap.entity.SquadronEntity;
 import pe.mil.fap.entity.VisitEntity;
-import pe.mil.fap.entity.VisitorEntity; 
+import pe.mil.fap.entity.VisitorEntity;
+import pe.mil.fap.entity.VisitorVisitEntity;
 import pe.mil.fap.exception.BadRequestException;
 import pe.mil.fap.exception.NotFoundException;
 import pe.mil.fap.repository.VisitRepository;
@@ -207,7 +208,21 @@ public class VisitServiceImpl implements VisitService{
 		        return isWithinDateRange && isDocumentMatched;
 			}).collect(Collectors.toList());
 			
- 
+			
+			int countIsNotPermitted = 0;
+			
+			for (VisitEntity visit : filteredVisit) {
+				for (VisitorVisitEntity visitVisitor : visit.getVisitorVisit()) {
+					if(!visitVisitor.getCoSituation().equals(PersonalSituationEnum.PERMITTED)) {
+						countIsNotPermitted++;
+					}
+				}
+			} 
+			/*
+			if (countIsNotPermitted > 0) {
+				
+			}
+			
 			Boolean isNotPermitted = filteredVisit.stream()
 												  .anyMatch(visit -> 
 												  			visit.getVisitorVisit()
@@ -215,11 +230,11 @@ public class VisitServiceImpl implements VisitService{
 												  				 .anyMatch(visitorVisit -> 
 												  					!visitorVisit.getCoSituation().equals(PersonalSituationEnum.PERMITTED)
 												  				  )
-											                );
+											                );*/
 			
 			VisitScheduleByVisitorDTO visitSchedule = new VisitScheduleByVisitorDTO();
 			visitSchedule.setVisitor(optVisitor.get());
-			visitSchedule.setCoSituationVisitor(isNotPermitted ? SegmentTypeEnum.DETENTION : SegmentTypeEnum.ENTRANCE);
+			visitSchedule.setCoSituationVisitor((countIsNotPermitted > 0) ? SegmentTypeEnum.DETENTION : SegmentTypeEnum.ENTRANCE);
 			visitSchedule.setVisits(filteredVisit);
 			return visitSchedule;
 		} catch (Exception exception) {
