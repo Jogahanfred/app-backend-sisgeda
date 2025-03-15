@@ -18,4 +18,10 @@ public interface VisitorRepository extends JpaRepository<VisitorEntity, Long> {
 
 	@Query("select v from VisitorEntity v where v.nuDocument = :document")
 	Optional<VisitorEntity> findByNuDocumento(String document);
+	
+	@Query(value = "select count(*) from tbl_visitor tv", nativeQuery = true)
+	Integer counterVisitors();	
+	
+	@Query(value = "select count(*) from tbl_visitor tv where tv.no_nationality != 'PERU'", nativeQuery = true)
+	Integer counterForeignVisitor();	
 }

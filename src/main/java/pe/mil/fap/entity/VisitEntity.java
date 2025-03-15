@@ -6,6 +6,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -13,10 +15,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import pe.mil.fap.configuration.auditor.AuditorConfig;
+import pe.mil.fap.utils.enums.SegmentTypeEnum;
+import pe.mil.fap.utils.enums.VisitSituationEnum;
 import jakarta.persistence.ForeignKey;
 
 @Table(name = "TBL_VISIT")
@@ -58,6 +63,10 @@ public class VisitEntity extends AuditorConfig<Long> {
 
 	@OneToMany(mappedBy = "segment", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SegmentVisitorEntity> segmentVisitor;
+	
+	@Transient
+	@Enumerated(EnumType.STRING)
+	private VisitSituationEnum noVisitSituation;
 
 	public VisitEntity() {
 		super();
@@ -68,7 +77,7 @@ public class VisitEntity extends AuditorConfig<Long> {
 			@NotNull(message = "La fecha de inicio no debe ser vacio") LocalDate feStart,
 			@NotNull(message = "La fecha de termino no debe ser vacio") LocalDate feEnd, ScheduleEntity schedule,
 			DocumentEntity document, SquadronEntity squadron, List<VisitorVisitEntity> visitorVisit,
-			List<SegmentVisitorEntity> segmentVisitor) {
+			List<SegmentVisitorEntity> segmentVisitor,VisitSituationEnum noVisitSituation ) {
 		super();
 		this.idVisit = idVisit;
 		this.noName = noName;
@@ -79,6 +88,7 @@ public class VisitEntity extends AuditorConfig<Long> {
 		this.squadron = squadron;
 		this.visitorVisit = visitorVisit;
 		this.segmentVisitor = segmentVisitor;
+		this.noVisitSituation = noVisitSituation;
 	}
 
 	public boolean isFeStartValid() {
@@ -162,6 +172,14 @@ public class VisitEntity extends AuditorConfig<Long> {
 
 	public void setSchedule(ScheduleEntity schedule) {
 		this.schedule = schedule;
+	}
+
+	public VisitSituationEnum getNoVisitSituation() {
+		return noVisitSituation;
+	}
+
+	public void setNoVisitSituation(VisitSituationEnum noVisitSituation) {
+		this.noVisitSituation = noVisitSituation;
 	}
 
 }

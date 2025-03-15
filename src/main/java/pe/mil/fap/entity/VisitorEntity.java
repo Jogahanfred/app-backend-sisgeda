@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -64,6 +65,9 @@ public class VisitorEntity extends AuditorConfig<Long> {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_IMAGE", referencedColumnName = "ID")
 	public ImageEntity image;
+	
+	@Transient
+	public String txFullName;
 
 	public VisitorEntity() {
 		super();
@@ -76,7 +80,7 @@ public class VisitorEntity extends AuditorConfig<Long> {
 			@NotNull(message = "El tipo de documento no debe ser vacio") DocumentTypeEnum noDocumentType,
 			@NotNull(message = "El género no debe ser vacio") GenderEnum noGender,
 			@NotNull(message = "La nacionalidad no debe ser vacio") NationalityEnum noNationality, Integer nuPhone,
-			ImageEntity image) {
+			ImageEntity image, String txFullName) {
 		super();
 		this.idVisitor = idVisitor;
 		this.noName = noName;
@@ -87,6 +91,7 @@ public class VisitorEntity extends AuditorConfig<Long> {
 		this.noNationality = noNationality;
 		this.nuPhone = nuPhone;
 		this.image = image;
+		this.txFullName = txFullName;
 	}
 
 	public Long getIdVisitor() {
@@ -159,6 +164,10 @@ public class VisitorEntity extends AuditorConfig<Long> {
 
 	public void setImage(ImageEntity image) {
 		this.image = image;
+	}
+
+	public String getTxFullName() {
+		return this.noSurName + " " + this.noName;
 	}	
 
 }

@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController; 
 
 import jakarta.validation.Valid;
+import pe.mil.fap.dto.helpers.DailyVisitStatusDTO;
 import pe.mil.fap.dto.helpers.PageDTO;
 import pe.mil.fap.dto.helpers.VisitScheduleByVisitorDTO;
+import pe.mil.fap.dto.helpers.VisitorScheduleOnTheDayDTO;
 import pe.mil.fap.dto.response.ResponseDTO;
 import pe.mil.fap.entity.SquadronEntity;
 import pe.mil.fap.entity.VisitEntity;
@@ -52,6 +54,33 @@ public class VisitController {
 	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT, visitsByVisitor), HttpStatus.OK))
 	    		       .orElseThrow(()-> new NotFoundException(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT));
 	}
+
+	@GetMapping("/findVisitsScheduledOnTheDay")
+	public ResponseEntity<ResponseDTO> findVisitsScheduledOnTheDay(){
+		List<VisitEntity> visits = visitService.findVisitsScheduledOnTheDay();
+		return Optional.ofNullable(visits)
+	    		       .filter(list -> !list.isEmpty())
+	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_DATA_RETURNED, list), HttpStatus.OK))
+	    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND, visits), HttpStatus.OK));
+	}
+	
+	@GetMapping("/findVisitorsScheduledOnTheDay")
+	public ResponseEntity<ResponseDTO> findVisitorsScheduledOnTheDay(){
+	    List<VisitorScheduleOnTheDayDTO> visits = visitService.findVisitorsScheduledOnTheDay();
+	    return Optional.ofNullable(visits)
+	    		       .filter(list -> !list.isEmpty())
+	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_DATA_RETURNED, list), HttpStatus.OK))
+	    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND, visits), HttpStatus.OK));
+	}
+	
+	@GetMapping("/findDailyVisitStatus")
+	public ResponseEntity<ResponseDTO> findDailyVisitStatus(){
+	    DailyVisitStatusDTO daily = visitService.findDailyVisitStatus();
+	    return Optional.ofNullable(daily) 
+	    		       .map(dailyMap -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_DATA_RETURNED, dailyMap), HttpStatus.OK))
+	    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND, null), HttpStatus.OK));
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<ResponseDTO> findById(@PathVariable(name = "id") Long id){
 		Optional<VisitEntity> optVisitFound = visitService.findByID(id);
@@ -66,6 +95,10 @@ public class VisitController {
 	
 	@PutMapping("/updateSituationVisitor")
 	public ResponseEntity<ResponseDTO> updateSituationVisitor(@RequestParam(name = "idVisitor") Long idVisitor,@RequestParam(name = "idVisit") Long idVisit , @RequestParam(name = "coSituation") PersonalSituationEnum coSituation) {
-		return new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_VISITOR_UPDATED_SITUATION, visitService.updateSituationVisitor(idVisit, idVisitor, coSituation)), HttpStatus.OK);
+
+		Optional<VisitEntity> optVisitFound = visitService.updateSituationVisitor(idVisit, idVisitor, coSituation);
+		return optVisitFound.map(visit -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_VISITOR_UPDATED_SITUATION, visit), HttpStatus.OK))
+							   .orElseThrow(() -> new NotFoundException(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND));
+		 
 	} 
 }

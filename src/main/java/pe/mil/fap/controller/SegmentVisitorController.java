@@ -1,5 +1,6 @@
 package pe.mil.fap.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import jakarta.validation.Valid;
 import pe.mil.fap.dto.helpers.PageDTO;
 import pe.mil.fap.dto.response.ResponseDTO;
 import pe.mil.fap.entity.SegmentVisitorEntity;
+import pe.mil.fap.entity.SquadronEntity;
 import pe.mil.fap.entity.VisitEntity;
 import pe.mil.fap.exception.NotFoundException;
 import pe.mil.fap.service.processes.inf.SegmentVisitorService;
@@ -35,7 +37,25 @@ public class SegmentVisitorController {
 
 	@Autowired
 	private SegmentVisitorService segmentVisitorService;
-
+	
+	@GetMapping("/findAllForEveryDay")
+	public ResponseEntity<ResponseDTO> findAllForEveryDay(@RequestParam("day") String day) {
+	    List<SegmentVisitorEntity> segments = segmentVisitorService.findAllForEveryDay(day);
+	    return Optional.ofNullable(segments)
+	    		       .filter(list -> !list.isEmpty())
+	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_DATA_RETURNED, list), HttpStatus.OK))
+	    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND, segments), HttpStatus.OK));
+	}
+	
+	@GetMapping("/findAllOfToday")
+	public ResponseEntity<ResponseDTO> findAllOfToday() {
+	    List<SegmentVisitorEntity> segments = segmentVisitorService.findAllOfToday();
+	    return Optional.ofNullable(segments)
+	    		       .filter(list -> !list.isEmpty())
+	    		       .map(list -> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.SUCCESS_MESSAGE_DATA_RETURNED, list), HttpStatus.OK))
+	    		       .orElseGet(()-> new ResponseEntity<>(ResponseDTO.createSuccess(MessageConstants.INFO_MESSAGE_NO_DATA_FOUND, segments), HttpStatus.OK));
+	}
+	
 	@PutMapping("/entranceSegmentVisitor")
 	public ResponseEntity<ResponseDTO> entranceSegmentVisitor(@RequestParam("idVisit") Long idVisit, @RequestParam("idVisitor") Long idVisitor) {
 		SegmentVisitorEntity segment = segmentVisitorService.entranceSegmentVisitor(idVisit, idVisitor);

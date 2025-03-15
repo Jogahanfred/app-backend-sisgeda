@@ -53,9 +53,34 @@ public class SegmentVisitorServiceImpl implements SegmentVisitorService{
 	private VisitorService visitorService;
 	
 	@Override
+	public List<SegmentVisitorEntity> findAllForEveryDay(String day) throws ServiceException {
+		try {
+	        LocalDate date = LocalDate.parse(day);
+			return repo.findAll().stream().filter(segment -> segment.getFeStartSegment().toLocalDate().equals(date)).collect(Collectors.toList());
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
+	}
+
+	@Override
+	public List<SegmentVisitorEntity> findAllOfToday() throws ServiceException {
+		try {
+			return repo.findAll().stream().filter(segment -> segment.getFeStartSegment().toLocalDate().equals(LocalDate.now())).collect(Collectors.toList());
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
+	}
+
+	@Override
 	public List<SegmentVisitorEntity> findAll() throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return repo.findAll();
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
 	}
 
 	@Override
@@ -114,26 +139,11 @@ public class SegmentVisitorServiceImpl implements SegmentVisitorService{
 				throw new NotFoundException(MessageConstants.INFO_MESSAGE_VISITOR_NOT_FOUND);				
 			}
 
-			Boolean visitorPermitted = optVisitFound.get().getVisitorVisit().stream().anyMatch(visitorVisit -> visitorVisit.getCoSituation().equals(PersonalSituationEnum.PERMITTED));
-			
-			if (!visitorPermitted) {
-				Optional<PersonalSituationEnum> visitorSituation = optVisitFound.get().getVisitorVisit().stream()
-					    .filter(visitorVisit -> visitorVisit.getVisitor().getIdVisitor().equals(idVisitor))
-					    .map(visitorVisit -> visitorVisit.getCoSituation()) 
-					    .findFirst(); 
-	  
-				VisitorEntity visitor = new VisitorEntity();
-				visitor.setIdVisitor(idVisitor);
-					    
-				SegmentVisitorEntity segment = new SegmentVisitorEntity();
-				segment.setSegment(optVisitFound.get());
-				segment.setVisitor(visitor);
-				segment.setCoSegmentType(SegmentTypeEnum.DETENTION);
-				segment.setFeStartSegment(LocalDateTime.now());
-				segment.setFeEndSegment(LocalDateTime.now());
-				segment.setTxSegmentDetail(MessageConstants.INFO_MESSAGE_VISITOR_DETENTION + " ("+visitorSituation.get().name() + ")");
-				return repo.save(segment);			
-			}else {
+			Boolean visitorPermitted = !optVisitFound.get().getVisitorVisit().stream()
+				    .filter(visitorVisit -> visitorVisit.getVisitor().getIdVisitor().equals(idVisitor))
+				    .anyMatch(visitorVisit -> !visitorVisit.getCoSituation().equals(PersonalSituationEnum.PERMITTED));
+ 
+			if (visitorPermitted) {
 				DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
 			    LocalTime currentTime = LocalTime.now(); 
 			    
@@ -160,6 +170,24 @@ public class SegmentVisitorServiceImpl implements SegmentVisitorService{
 			    segment.setCoSegmentType(SegmentTypeEnum.ENTRANCE);
 			    segment.setFeStartSegment(LocalDateTime.now());
 			    return repo.save(segment);	 	
+
+			}else { 
+				Optional<PersonalSituationEnum> visitorSituation = optVisitFound.get().getVisitorVisit().stream()
+					    .filter(visitorVisit -> visitorVisit.getVisitor().getIdVisitor().equals(idVisitor))
+					    .map(visitorVisit -> visitorVisit.getCoSituation()) 
+					    .findFirst(); 
+	  
+				VisitorEntity visitor = new VisitorEntity();
+				visitor.setIdVisitor(idVisitor);
+					    
+				SegmentVisitorEntity segment = new SegmentVisitorEntity();
+				segment.setSegment(optVisitFound.get());
+				segment.setVisitor(visitor);
+				segment.setCoSegmentType(SegmentTypeEnum.DETENTION);
+				segment.setFeStartSegment(LocalDateTime.now());
+				segment.setFeEndSegment(LocalDateTime.now());
+				segment.setTxSegmentDetail(MessageConstants.INFO_MESSAGE_VISITOR_DETENTION + " ("+visitorSituation.get().name() + ")");
+				return repo.save(segment);
 			}   
 		    
 		} catch (Exception exception) {

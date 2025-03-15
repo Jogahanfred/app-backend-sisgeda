@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import pe.mil.fap.dto.helpers.DailyVisitStatusDTO;
 import pe.mil.fap.dto.helpers.VisitScheduleByVisitorDTO;
+import pe.mil.fap.dto.helpers.VisitorScheduleOnTheDayDTO;
 import pe.mil.fap.entity.DocumentEntity;
 import pe.mil.fap.entity.ScheduleEntity;
 import pe.mil.fap.entity.SquadronEntity;
@@ -19,6 +21,7 @@ import pe.mil.fap.entity.VisitEntity;
 import pe.mil.fap.entity.VisitorEntity;
 import pe.mil.fap.entity.VisitorVisitEntity;
 import pe.mil.fap.exception.BadRequestException;
+import pe.mil.fap.exception.ConflictException;
 import pe.mil.fap.exception.NotFoundException;
 import pe.mil.fap.repository.VisitRepository;
 import pe.mil.fap.service.general.inf.DocumentService;
@@ -28,7 +31,8 @@ import pe.mil.fap.service.processes.inf.ScheduleService;
 import pe.mil.fap.service.processes.inf.VisitService;
 import pe.mil.fap.utils.constants.MessageConstants;
 import pe.mil.fap.utils.enums.PersonalSituationEnum;
-import pe.mil.fap.utils.enums.SegmentTypeEnum; 
+import pe.mil.fap.utils.enums.SegmentTypeEnum;
+import pe.mil.fap.utils.enums.VisitSituationEnum; 
 
 @Service
 public class VisitServiceImpl implements VisitService{
@@ -51,7 +55,29 @@ public class VisitServiceImpl implements VisitService{
 	@Override
 	public List<VisitEntity> findAll() throws ServiceException {
 		try {
-			return repo.findAll();
+			return repo.findAll().stream().map(visit -> {
+				if (visit.getFeEnd().isBefore(LocalDate.now())) {
+					if (this.findSegmentVisit(visit.getIdVisit())) {
+						visit.setNoVisitSituation(VisitSituationEnum.COMPLETED);	
+					} else {
+						visit.setNoVisitSituation(VisitSituationEnum.EXPIRED);
+					}
+				}else if (visit.getFeStart().isAfter(LocalDate.now())) {
+					visit.setNoVisitSituation(VisitSituationEnum.PENDING);
+				}else if (!LocalDate.now().isBefore(visit.getFeStart()) && !LocalDate.now().isAfter(visit.getFeEnd())) {
+					if (this.findSegmentVisit(visit.getIdVisit())) {
+						if (this.findSegmentVisitTypeEntrance(visit.getIdVisit())) {
+							visit.setNoVisitSituation(VisitSituationEnum.IN_PROGRESS);	
+						}else {							
+							visit.setNoVisitSituation(VisitSituationEnum.STARTED);	
+						}
+					}else{
+						visit.setNoVisitSituation(VisitSituationEnum.SCHEDULED);
+					} 
+				}
+				return visit;
+				
+			}).collect(Collectors.toList());
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
@@ -119,13 +145,16 @@ public class VisitServiceImpl implements VisitService{
 			if (setIdVisitors.size() != visitEntity.getVisitorVisit().size()) {
 				throw new BadRequestException(MessageConstants.INFO_DUPLICATE_VISITOR_ID);
 			} 
-
+			
 			for (Long idVisitor : setIdVisitors) {
 				Optional<VisitorEntity> optVisitorFound = visitorService.findByID(idVisitor);
 				if (optVisitorFound.isEmpty()) {
 					throw new NotFoundException(MessageConstants.INFO_MESSAGE_VISITOR_NOT_FOUND + " (ID: " + idVisitor + ")");		
 				}
-			}
+				if (this.findScheduledVisitToVisitor(idVisitor)) {
+					throw new ConflictException(MessageConstants.INFO_VISITOR_HAS_VISIT_IN_PROGRESS + " (Visitante: " + optVisitorFound.get().getNoSurName() + ")");					
+				}
+			} 			
 			
 			visitEntity.getVisitorVisit().stream().forEach(visitorVisit -> {				
 				visitorVisit.setVisit(visitEntity);
@@ -139,6 +168,8 @@ public class VisitServiceImpl implements VisitService{
 				throw new NotFoundException(exception.getMessage());
 			}else if(exception instanceof BadRequestException) {
 				throw new BadRequestException(exception.getMessage());
+			}else if(exception instanceof ConflictException) {
+				throw new ConflictException(exception.getMessage());
 			}else {				
 				throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
 			}
@@ -158,7 +189,7 @@ public class VisitServiceImpl implements VisitService{
 	}
 
 	@Override
-	public Boolean updateSituationVisitor(Long idVisit, Long idVisitor, PersonalSituationEnum coSituation) throws ServiceException {
+	public Optional<VisitEntity> updateSituationVisitor(Long idVisit, Long idVisitor, PersonalSituationEnum coSituation) throws ServiceException {
 		try {
 			Optional<VisitorEntity> optVisitorFound = visitorService.findByID(idVisitor);
 			if (optVisitorFound.isEmpty()) {
@@ -171,7 +202,7 @@ public class VisitServiceImpl implements VisitService{
 			}
 			
 			repo.updateSituationVisitor(idVisit, idVisitor, coSituation);
-			return true;
+			return this.findByID(idVisit);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			if (exception instanceof NotFoundException) {
@@ -184,8 +215,40 @@ public class VisitServiceImpl implements VisitService{
 
 	@Override
 	public List<VisitEntity> findVisitsScheduledOnTheDay() throws ServiceException{
+		try { 
+			return repo.findVisitsScheduledOnTheDay().stream().map(visit -> {
+				if (visit.getFeEnd().isBefore(LocalDate.now())) {
+					if (this.findSegmentVisit(visit.getIdVisit())) {
+						visit.setNoVisitSituation(VisitSituationEnum.COMPLETED);	
+					} else {
+						visit.setNoVisitSituation(VisitSituationEnum.EXPIRED);
+					}
+				}else if (visit.getFeStart().isAfter(LocalDate.now())) {
+					visit.setNoVisitSituation(VisitSituationEnum.PENDING);
+				}else if (!LocalDate.now().isBefore(visit.getFeStart()) && !LocalDate.now().isAfter(visit.getFeEnd())) {
+					if (this.findSegmentVisit(visit.getIdVisit())) {
+						if (this.findSegmentVisitTypeEntrance(visit.getIdVisit())) {
+							visit.setNoVisitSituation(VisitSituationEnum.IN_PROGRESS);	
+						}else {							
+							visit.setNoVisitSituation(VisitSituationEnum.STARTED);	
+						}
+					}else{
+						visit.setNoVisitSituation(VisitSituationEnum.SCHEDULED);
+					} 
+				}
+				return visit;
+				
+			}).collect(Collectors.toList());
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
+	}
+
+	@Override
+	public List<VisitorScheduleOnTheDayDTO> findVisitorsScheduledOnTheDay() throws ServiceException {
 		try {
-			return repo.findVisitsScheduledOnTheDay();
+			return repo.findVisitorsScheduledOnTheDay();
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
@@ -207,34 +270,21 @@ public class VisitServiceImpl implements VisitService{
 		        boolean isDocumentMatched = visit.getVisitorVisit().stream().anyMatch(visitorVisit  -> visitorVisit .getVisitor().getNuDocument().equals(nuDocument));
 		        return isWithinDateRange && isDocumentMatched;
 			}).collect(Collectors.toList());
-			
-			
-			int countIsNotPermitted = 0;
-			
-			for (VisitEntity visit : filteredVisit) {
-				for (VisitorVisitEntity visitVisitor : visit.getVisitorVisit()) {
-					if(!visitVisitor.getCoSituation().equals(PersonalSituationEnum.PERMITTED)) {
-						countIsNotPermitted++;
-					}
-				}
-			} 
-			/*
-			if (countIsNotPermitted > 0) {
-				
-			}
+ 
 			
 			Boolean isNotPermitted = filteredVisit.stream()
 												  .anyMatch(visit -> 
 												  			visit.getVisitorVisit()
 												  				 .stream()
+																 .filter(visitorVisit -> visitorVisit.getVisitor().getNuDocument().equals(nuDocument))
 												  				 .anyMatch(visitorVisit -> 
 												  					!visitorVisit.getCoSituation().equals(PersonalSituationEnum.PERMITTED)
 												  				  )
-											                );*/
+											                );
 			
 			VisitScheduleByVisitorDTO visitSchedule = new VisitScheduleByVisitorDTO();
 			visitSchedule.setVisitor(optVisitor.get());
-			visitSchedule.setCoSituationVisitor((countIsNotPermitted > 0) ? SegmentTypeEnum.DETENTION : SegmentTypeEnum.ENTRANCE);
+			visitSchedule.setCoSituationVisitor(isNotPermitted ? SegmentTypeEnum.DETENTION : SegmentTypeEnum.ENTRANCE);
 			visitSchedule.setVisits(filteredVisit);
 			return visitSchedule;
 		} catch (Exception exception) {
@@ -246,7 +296,76 @@ public class VisitServiceImpl implements VisitService{
 			}
 		}
 	}
-	
-	
 
+	@Override
+	public Boolean findScheduledVisitToVisitor(Long idVisitor) throws ServiceException {
+		try {
+			Optional<VisitorEntity> optVisitor = this.visitorService.findByID(idVisitor);
+			if (optVisitor.isEmpty()) {
+				throw new NotFoundException(MessageConstants.INFO_MESSAGE_VISITOR_NOT_FOUND);				
+			}
+			return repo.findScheduledVisitToVisitor(idVisitor) > 0 ? true : false;
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			if (exception instanceof NotFoundException) {
+				throw new NotFoundException(exception.getMessage());
+			}else {				
+				throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+			}
+		}
+	}
+
+	@Override
+	public Boolean findSegmentVisit(Long idVisit) throws ServiceException {
+		try {
+			Optional<VisitEntity> optVisit = this.findByID(idVisit);
+			if (optVisit.isEmpty()) {
+				throw new NotFoundException(MessageConstants.INFO_MESSAGE_VISIT_NOT_FOUND);				
+			}
+			return repo.findSegmentVisit(idVisit) > 0 ? true : false;
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			if (exception instanceof NotFoundException) {
+				throw new NotFoundException(exception.getMessage());
+			}else {				
+				throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+			}
+		}
+	}
+
+	@Override
+	public Boolean findSegmentVisitTypeEntrance(Long idVisit) throws ServiceException {
+		try {
+			Optional<VisitEntity> optVisit = this.findByID(idVisit);
+			if (optVisit.isEmpty()) {
+				throw new NotFoundException(MessageConstants.INFO_MESSAGE_VISIT_NOT_FOUND);				
+			}
+			return repo.findSegmentVisitTypeEntrance(idVisit) > 0 ? true : false;
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			if (exception instanceof NotFoundException) {
+				throw new NotFoundException(exception.getMessage());
+			}else {				
+				throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+			}
+		}
+	}
+
+	@Override
+	public DailyVisitStatusDTO findDailyVisitStatus() throws ServiceException {
+		try { 
+			DailyVisitStatusDTO daily = new DailyVisitStatusDTO();
+			daily.setTotalScheduledVisits(this.findVisitsScheduledOnTheDay().size());
+			daily.setTotalScheduledVisitors(repo.counterVisitorsScheduledOnTheDay());
+			daily.setTotalVisitorsRegisteredInProgress(repo.counterVisitorsScheduledOnTheDayInProgress());
+			daily.setTotalVisitorsRegisteredExit(repo.counterVisitorsScheduledOnTheDayExit());
+			daily.setTotalVisitorsRegisteredDenied(repo.counterVisitorsScheduledOnTheDayDetention());
+			return daily;
+		} catch (Exception exception) {
+			exception.printStackTrace(); 			
+			throw new ServiceException(MessageConstants.ERROR_IN_SERVICE_SERVER);
+		}
+	}
+	
+	
 }

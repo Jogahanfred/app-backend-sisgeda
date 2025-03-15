@@ -21,5 +21,10 @@ public interface SegmentVisitorRepository extends JpaRepository<SegmentVisitorEn
 	@Modifying
 	@Query(value = "update tbl_segment_visitor set co_segment_type = 'EXIT', fe_end_segment = CURRENT_TIMESTAMP where id_segment_visitor = :idSegmentVisitor", nativeQuery = true)
 	void updateSituationVisitorExit(Long idSegmentVisitor);
-
+	
+	@Query(value = "select count(distinct(tsv.id_visitor)) from tbl_segment_visitor tsv where co_segment_type = 'DETENTION'", nativeQuery = true)
+	Integer counterVisitorsDetentions();	
+	
+	@Query(value = "select count(distinct(tsv.id_visitor)) from tbl_segment_visitor tsv where co_segment_type = 'DETENTION' and TO_CHAR(fe_start_segment,'MM') = :month", nativeQuery = true)
+	Integer counterVisitorsDetentionsLastMonth(String month);	
 }

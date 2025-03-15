@@ -11,7 +11,9 @@ public class MessageConstants {
 	// CONTROL VISIT
 	public static final String INFO_MESSAGE_DATA_RETURNED_VISIT_BY_DOCUMENT = "Esta persona tiene programado visita a la unidad.";
 	public static final String INFO_MESSAGE_NO_DATA_FOUND_VISIT_BY_DOCUMENT = "Esta persona hoy no tiene programado ningun ingreso.";
-	
+
+	// STATS
+	public static final String SUCCESS_MESSAGE_STATS_WIDGET_RETURNED = "El widgets ha sido devuelto correctamente.";
 	
 	// LIST
 	public static final String SUCCESS_MESSAGE_DATA_RETURNED = "El listado de datos ha sido devuelto correctamente.";
@@ -24,6 +26,7 @@ public class MessageConstants {
 	public static final String SUCCESS_MESSAGE_VISIT_FOUND = "La visita ha sido encontrada con éxito.";
 	public static final String SUCCESS_MESSAGE_VISIT_CREATED = "La visita ha sido creada con éxito.";
 	public static final String SUCCESS_MESSAGE_VISITOR_UPDATED_SITUATION = "La situación del visitante ha sido actualizada con éxito.";
+	public static final String INFO_VISITOR_HAS_VISIT_IN_PROGRESS = "La persona tiene una visita en curso.";
 	
 	// MAINTENANCE VISIT
 	public static final String SUCCESS_MESSAGE_VISIT_ENTRANCE = "Se ha registrado el ingreso correctamente.";
